@@ -24,8 +24,7 @@ Handlers handlers1 = new Handlers(
         .completeHandler((Handler2) builder -> {
             hitComplete.set(true);
             assertEquals("1234", builder.toString());
-        })
-        .with(() -> new StringBuilder());
+        });
 
 Handlers handlers2 = new Handlers(
         (fail, next) -> builder -> {
@@ -39,7 +38,7 @@ Handlers handlers2 = new Handlers(
 
 Handlers handlers3 = Handlers.merge(handlers1, handlers2);
 
-handlers3.handle(null);
+handlers3.handle(new StringBuilder());
 
 assertEquals(false, hitException.get());
 assertEquals(true, hitComplete.get());
