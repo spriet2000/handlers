@@ -8,37 +8,41 @@ Handlers provides a minimal and adaptable interface for developing applications 
 
 ```java
     
-    Handlers handlers1 = new Handlers(
-            (fail, next) -> (e1 -> {
-                builder.append("1");
-                next.handle(null);
-            }),
-            (fail, next) -> (e1 -> {
-                builder.append("2");
-                next.handle(null);
-            }))
-            .exceptionHandler((Handler) e1 -> hitException.set(true))
-            .completeHandler((Handler) e1 -> {
-                hitComplete.set(true);
-                assertEquals("1234", builder.toString());
-            });
-            
-    Handlers Handlers = new Handlers(
-            (fail, next) -> (e1 -> {
-                builder.append("3");
-                next.handle(null);
-            }),
-            (fail, next) -> (e1 -> {
-                builder.append("4");
-                next.handle(null);
-            }));
-            
-    Handlers handlers3 = Handlers.newMerged(handlers1, Handlers);
-    
-    handlers3.handle(null);
-    
-    assertEquals(false, hitException.get());
-    assertEquals(true, hitComplete.get());
+AtomicBoolean hitException = new AtomicBoolean(false);
+AtomicBoolean hitComplete = new AtomicBoolean(false);
+StringBuilder builder = new StringBuilder();
+
+Handlers2 handlers1 = new Handlers2(
+        (fail, next) -> ((e1, e2) -> {
+            builder.append("1");
+            next.handle(null);
+        }),
+        (fail, next) -> ((e1, e2) -> {
+            builder.append("2");
+            next.handle(null);
+        }))
+        .exceptionHandler((Handler2) (e1, e2) -> hitException.set(true))
+        .completeHandler((Handler2) (e1, e2) -> {
+            hitComplete.set(true);
+            assertEquals("1234", builder.toString());
+        });
+        
+Handlers2 handlers2 = new Handlers2(
+        (fail, next) -> ((e1, e2) -> {
+            builder.append("3");
+            next.handle(null);
+        }),
+        (fail, next) -> ((e1, e2) -> {
+            builder.append("4");
+            next.handle(null);
+        }));
+        
+Handlers2 handles3 = Handlers2.merge(handlers1, handlers2);
+
+handles3.handle(null, null);
+
+assertEquals(false, hitException.get());
+assertEquals(true, hitComplete.get());
 
 ```
 ## Installation
