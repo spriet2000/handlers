@@ -14,13 +14,13 @@ AtomicBoolean hitComplete = new AtomicBoolean(false);
 Handlers2 handlers1 = new Handlers2(
         (fail, next) -> ((builder, args) -> {
             builder.append("1");
-            next.handle(null);
+            next.handle(builder);
         }),
         (fail, next) -> ((builder, args) -> {
             builder.append("2");
-            next.handle(null);
+            next.handle(builder);
         }))
-        .exceptionHandler((Handler2) (builder, args) -> hitException.set(true))
+        .exceptionHandler((Handler2) (e1, args) -> hitException.set(true))
         .completeHandler((Handler2) (builder, args) -> {
             hitComplete.set(true);
             assertEquals("1234", builder.toString());
@@ -30,16 +30,16 @@ Handlers2 handlers1 = new Handlers2(
 Handlers2 handlers2 = new Handlers2(
         (fail, next) -> ((builder, args) -> {
             builder.append("3");
-            next.handle(null);
+            next.handle(builder);
         }),
         (fail, next) -> ((builder, args) -> {
             builder.append("4");
-            next.handle(null);
+            next.handle(builder);
         }));
         
 Handlers2 handles3 = Handlers2.merge(handlers1, handlers2);
 
-handles3.handle(null, null);
+handles3.handle();
 
 assertEquals(false, hitException.get());
 assertEquals(true, hitComplete.get());
