@@ -10,29 +10,29 @@ Handlers provides a minimal and adaptable interface for developing applications 
     
 AtomicBoolean hitException = new AtomicBoolean(false);
 AtomicBoolean hitComplete = new AtomicBoolean(false);
-StringBuilder builder = new StringBuilder();
 
 Handlers2 handlers1 = new Handlers2(
-        (fail, next) -> ((e1, e2) -> {
+        (fail, next) -> ((builder, args) -> {
             builder.append("1");
             next.handle(null);
         }),
-        (fail, next) -> ((e1, e2) -> {
+        (fail, next) -> ((builder, args) -> {
             builder.append("2");
             next.handle(null);
         }))
-        .exceptionHandler((Handler2) (e1, e2) -> hitException.set(true))
-        .completeHandler((Handler2) (e1, e2) -> {
+        .exceptionHandler((Handler2) (builder, args) -> hitException.set(true))
+        .completeHandler((Handler2) (builder, args) -> {
             hitComplete.set(true);
             assertEquals("1234", builder.toString());
-        });
+        })
+        .with(() -> new StringBuilder());
         
 Handlers2 handlers2 = new Handlers2(
-        (fail, next) -> ((e1, e2) -> {
+        (fail, next) -> ((builder, args) -> {
             builder.append("3");
             next.handle(null);
         }),
-        (fail, next) -> ((e1, e2) -> {
+        (fail, next) -> ((builder, args) -> {
             builder.append("4");
             next.handle(null);
         }));
