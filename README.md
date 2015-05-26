@@ -20,7 +20,7 @@ Handlers2 handlers1 = new Handlers2(
             builder.append("2");
             next.handle(builder);
         }))
-        .exceptionHandler((Handler2) (e1, args) -> hitException.set(true))
+        .exceptionHandler((Handler2) (e, args) -> hitException.set(true))
         .completeHandler((Handler2) (builder, args) -> {
             hitComplete.set(true);
             assertEquals("1234", builder.toString());
