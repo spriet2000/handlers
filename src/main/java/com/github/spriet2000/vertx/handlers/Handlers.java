@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class Handlers<T> implements Handler<T>, Handleable<T> {
+public final class Handlers<T> implements Handler<T>, Handleable<T> {
 
     private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<T>>> handlers;
 
