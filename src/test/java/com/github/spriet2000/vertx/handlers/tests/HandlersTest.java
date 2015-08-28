@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 
-public class BiHandlerTest {
+public class HandlersTest {
 
     @Test
     public void testExample() {
