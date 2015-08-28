@@ -9,20 +9,28 @@ import java.util.function.BiFunction;
 
 public class Handlers<T> implements Handler<T> {
 
-    private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<T>>> handlers = new ArrayList<>();
+    private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<T>>> handlers;
 
     private Handler<T> handler;
 
-    private Handler<Throwable> exception;
-    private Handler<Object> succeeded;
+    private Handler<Throwable> exceptionHandler;
+    private Handler<Object> successHandler;
+
+
+    public Handlers(Handlers<T> handlers){
+        exceptionHandler = handlers.exceptionHandler;
+        successHandler = handlers.successHandler;
+        this.handlers = handlers.handlers;
+    }
 
     @SafeVarargs
-    public Handlers(Handler<Throwable> exception, Handler<Object> succeeded, BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>... handlers){
+    public Handlers(Handler<Throwable> exceptionHandler, Handler<Object> successHandler, BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>... handlers){
+        this.handlers = new ArrayList<>();
         for (BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>> handler : handlers) {
             this.handlers.add(handler);
         }
-        this.exception= exception;
-        this.succeeded = succeeded;
+        this.exceptionHandler = exceptionHandler;
+        this.successHandler = successHandler;
     }
 
     @Override
@@ -47,9 +55,9 @@ public class Handlers<T> implements Handler<T> {
     }
 
     public Handler<T> handler(){
-        handler  = handlers.get(handlers.size() - 1).apply(exception, succeeded);
+        handler  = handlers.get(handlers.size() - 1).apply(exceptionHandler, successHandler);
         for (int i = handlers.size() - 2; i >= 0; i--) {
-            handler = handlers.get(i).apply(exception, (Handler<Object>) handler);
+            handler = handlers.get(i).apply(exceptionHandler, (Handler<Object>) handler);
         }
         return handler;
     }
