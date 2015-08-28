@@ -7,20 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class Handlers<T> implements Handler<T> {
+public class Handlers<T> implements Handler<T>, Handleable<T> {
 
     private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<T>>> handlers;
 
     private Handler<T> handler;
-
     private Handler<Throwable> exceptionHandler;
     private Handler<Object> successHandler;
 
-
-    public Handlers(Handlers<T> handlers){
-        exceptionHandler = handlers.exceptionHandler;
-        successHandler = handlers.successHandler;
-        this.handlers = handlers.handlers;
+    public Handlers(Handleable<T> handlers){
+        exceptionHandler = handlers.exceptionHandler();
+        successHandler = handlers.successHandler();
+        this.handlers = handlers.handlers();
     }
 
     @SafeVarargs
@@ -60,5 +58,20 @@ public class Handlers<T> implements Handler<T> {
             handler = handlers.get(i).apply(exceptionHandler, (Handler<Object>) handler);
         }
         return handler;
+    }
+
+    @Override
+    public List<BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>> handlers() {
+        return handlers;
+    }
+
+    @Override
+    public Handler<Throwable> exceptionHandler() {
+        return exceptionHandler;
+    }
+
+    @Override
+    public Handler<Object> successHandler() {
+        return successHandler;
     }
 }
