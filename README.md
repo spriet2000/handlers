@@ -26,6 +26,7 @@ Handlers provides a minimal and adaptable interface for developing applications 
                 e.append("3");
                 n.handle(e);
             });
+            
     handlers.handle(builder);
 
     assertEquals("123", builder.toString());
