@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public final class Handlers<T> implements Handler<T>, Handleable<T> {
+public final class Handlers<E> implements Handler<E>, Handleable<E> {
 
-    private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<T>>> handlers;
+    private List<BiFunction<Handler<Throwable>, Handler<Object>,Handler<E>>> handlers;
 
-    private Handler<T> handler;
+    private Handler<E> handler;
     private Handler<Throwable> exceptionHandler;
     private Handler<Object> successHandler;
 
-    public Handlers(Handleable<T> handlers){
+    public Handlers(Handleable<E> handlers){
         exceptionHandler = handlers.exceptionHandler();
         successHandler = handlers.successHandler();
         this.handlers = handlers.handlers();
     }
 
     @SafeVarargs
-    public Handlers(Handler<Throwable> exceptionHandler, Handler<Object> successHandler, BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>... handlers){
+    public Handlers(Handler<Throwable> exceptionHandler, Handler<Object> successHandler, BiFunction<Handler<Throwable>, Handler<Object>, Handler<E>>... handlers){
         this.handlers = new ArrayList<>();
-        for (BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>> handler : handlers) {
+        for (BiFunction<Handler<Throwable>, Handler<Object>, Handler<E>> handler : handlers) {
             this.handlers.add(handler);
         }
         this.exceptionHandler = exceptionHandler;
@@ -32,27 +32,19 @@ public final class Handlers<T> implements Handler<T>, Handleable<T> {
     }
 
     @Override
-    public void handle(T event) {
+    public void handle(E event) {
         if (handler == null) {
             handler  = handler();
         }
         handler.handle(event);
     }
 
-    public Handlers<T> then(BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>> handler){
+    public Handlers<E> then(BiFunction<Handler<Throwable>, Handler<Object>, Handler<E>> handler){
         this.handlers.add(handler);
         return this;
     }
 
-    @SafeVarargs
-    public final Handlers<T> then(BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>... handlers){
-        for (BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>> handler : handlers) {
-            this.handlers.add(handler);
-        }
-        return this;
-    }
-
-    public Handler<T> handler(){
+    public Handler<E> handler(){
         handler  = handlers.get(handlers.size() - 1).apply(exceptionHandler, successHandler);
         for (int i = handlers.size() - 2; i >= 0; i--) {
             handler = handlers.get(i).apply(exceptionHandler, (Handler<Object>) handler);
@@ -61,7 +53,7 @@ public final class Handlers<T> implements Handler<T>, Handleable<T> {
     }
 
     @Override
-    public List<BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>> handlers() {
+    public List<BiFunction<Handler<Throwable>, Handler<Object>, Handler<E>>> handlers() {
         if(handlers == null) {
             handlers  = new ArrayList<>();
         }
