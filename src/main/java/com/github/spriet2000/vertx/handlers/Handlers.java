@@ -62,6 +62,9 @@ public final class Handlers<T> implements Handler<T>, Handleable<T> {
 
     @Override
     public List<BiFunction<Handler<Throwable>, Handler<Object>, Handler<T>>> handlers() {
+        if(handlers == null) {
+            handlers  = new ArrayList<>();
+        }
         return handlers;
     }
 
