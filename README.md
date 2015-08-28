@@ -8,35 +8,27 @@ Handlers provides a minimal and adaptable interface for developing applications 
 
 ```java
     
-    Handlers handlers1 = new Handlers(
-            (fail, next) -> (e1 -> {
-                builder.append("1");
-                next.handle(null);
-            }),
-            (fail, next) -> (e1 -> {
-                builder.append("2");
-                next.handle(null);
-            }))
-            .exceptionHandler((Handler) e1 -> hitException.set(true))
-            .completeHandler((Handler) e1 -> {
-                hitComplete.set(true);
-                assertEquals("1234", builder.toString());
+    AtomicBoolean hitException = new AtomicBoolean(false);
+    AtomicBoolean hitComplete = new AtomicBoolean(false);
+
+    StringBuilder builder = new StringBuilder();
+
+    Handlers<StringBuilder> handlers = new Handlers<>(
+            f -> hitException.set(true),
+            n -> hitComplete.set(true),
+            (f, n) -> e -> {
+                e.append("1");
+                n.handle(e);
+            }, (f, n) -> e -> {
+                e.append("2");
+                n.handle(e);
+            }, (f, n) -> e -> {
+                e.append("3");
+                n.handle(e);
             });
-            
-    Handlers Handlers = new Handlers(
-            (fail, next) -> (e1 -> {
-                builder.append("3");
-                next.handle(null);
-            }),
-            (fail, next) -> (e1 -> {
-                builder.append("4");
-                next.handle(null);
-            }));
-            
-    Handlers handlers3 = Handlers.newMerged(handlers1, Handlers);
-    
-    handlers3.handle(null);
-    
+    handlers.handle(builder);
+
+    assertEquals("123", builder.toString());
     assertEquals(false, hitException.get());
     assertEquals(true, hitComplete.get());
 
