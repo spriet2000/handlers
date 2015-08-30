@@ -1,6 +1,6 @@
-# Vert.x handlers
+# Handlers
 
-Handlers provides a minimal and adaptable interface for developing applications on the vert-x3 platform.
+Handlers provides a minimal and adaptable interface for developing applications.
 
 [![Build Status](https://travis-ci.org/spriet2000/vertx-handlers.svg?branch=master)](https://travis-ci.org/spriet2000/vertx-handlers)
 
@@ -8,30 +8,32 @@ Handlers provides a minimal and adaptable interface for developing applications 
 
 ```java
     
-    AtomicBoolean hitException = new AtomicBoolean(false);
-    AtomicBoolean hitComplete = new AtomicBoolean(false);
+       AtomicBoolean hitException = new AtomicBoolean(false);
+       AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-    StringBuilder builder = new StringBuilder();
+       StringBuilder builder = new StringBuilder();
 
-    Handlers<StringBuilder> handlers = new Handlers<>(
-            f -> hitException.set(true),
-            n -> hitComplete.set(true),
-            (f, n) -> e -> {
-                e.append("1");
-                n.handle(e);
-            }, (f, n) -> e -> {
-                e.append("2");
-                n.handle(e);
-            }, (f, n) -> e -> {
-                e.append("3");
-                n.handle(e);
-            });
-            
-    handlers.handle(builder);
+       Handlers<StringBuilder> handlers = new Handlers<>(
+               (e, a) -> hitException.set(true),
+               (e, a) -> hitComplete.set(true),
+               (f, n) -> (e, a) -> {
+                   e.append("1");
+                   n.accept("A");
+               }, (f, n) -> (e, a) -> {
+                   assertEquals("A", a);
+                   e.append("2");
+                   n.accept("B");
+               }, (f, n) -> (e, a) -> {
+                   assertEquals("B", a);
+                   e.append("3");
+                   n.accept(null);
+               });
 
-    assertEquals("123", builder.toString());
-    assertEquals(false, hitException.get());
-    assertEquals(true, hitComplete.get());
+       handlers.accept(builder, null);
+
+       assertEquals("123", builder.toString());
+       assertEquals(false, hitException.get());
+       assertEquals(true, hitComplete.get());
 
 ```
 ## Installation
