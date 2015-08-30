@@ -12,33 +12,23 @@ public final class Handlers<E>  {
     private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> handlers;
 
     private BiConsumer<E, Object> handler;
-    private BiConsumer<Object, Throwable> exceptionHandler;
-    private BiConsumer<Object, Object> successHandler;
-
-    public Handlers(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<Object, Object> successHandler) {
-        this.exceptionHandler = exceptionHandler;
-        this.successHandler = successHandler;
-    }
 
     @SafeVarargs
-    public Handlers(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<Object, Object> successHandler,
-                    BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>... handlers) {
+    public Handlers(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>... handlers) {
         this.handlers = new ArrayList<>();
         for (BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>> handler : handlers) {
             this.handlers.add(handler);
         }
-        this.exceptionHandler = exceptionHandler;
-        this.successHandler = successHandler;
     }
 
-    public void accept(E event, Object event2) {
+    public void accept(E event, Object event2, BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
         if (handler == null){
-            handler = handler();
+            handler = handler(exceptionHandler, successHandler);
         }
         handler.accept(event, event2);
     }
 
-    public BiConsumer<E, Object> handler() {
+    public BiConsumer<E, Object> handler(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
         return (event1, event2) -> {
             BiConsumer<E, Object> last = successHandler::accept;
             for (int i = handlers().size() - 1; i >= 0; i--) {

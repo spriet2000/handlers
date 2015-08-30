@@ -18,10 +18,6 @@ public class HandlersTest {
         StringBuilder builder = new StringBuilder();
 
         Handlers<StringBuilder> handlers = new Handlers<>(
-                (e, a) -> hitException.set(true),
-                (e, a) -> hitComplete.set(true));
-
-        handlers.andThen(
                 (f, n) -> (e, a) -> {
                     e.append("1");
                     n.accept("A");
@@ -35,7 +31,9 @@ public class HandlersTest {
                     n.accept(null);
                 });
 
-        handlers.accept(builder, null);
+        handlers.accept(builder, null,
+                (e, a) -> hitException.set(true),
+                (e, a) -> hitComplete.set(true));
 
         assertEquals("123", builder.toString());
         assertEquals(false, hitException.get());
@@ -50,13 +48,13 @@ public class HandlersTest {
         StringBuilder builder = new StringBuilder();
 
         Handlers<StringBuilder> handlers = new Handlers<>(
-                (e, a) -> hitException.set(true),
-                (e, a) -> hitComplete.set(true),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
 
-        handlers.accept(builder, null);
+        handlers.accept(builder, null,
+                (e, a) -> hitException.set(true),
+                (e, a) -> hitComplete.set(true));
 
         assertEquals(false, hitException.get());
         assertEquals(true, hitComplete.get());
@@ -70,13 +68,13 @@ public class HandlersTest {
         StringBuilder builder = new StringBuilder();
 
         Handlers<StringBuilder> handlers = new Handlers<>(
-                (e, a) -> hitException.set(true),
-                (e, a) -> hitComplete.set(true),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> f.accept(new RuntimeException()),
                 (f, n) -> (e, a) -> {});
 
-        handlers.accept(builder, null);
+        handlers.accept(builder, null,
+                (e, a) -> hitException.set(true),
+                (e, a) -> hitComplete.set(true));
 
         assertEquals(true, hitException.get());
         assertEquals(false, hitComplete.get());
