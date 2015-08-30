@@ -21,14 +21,14 @@ public final class Handlers<E, A>  {
         }
     }
 
-    public void accept(E event, Object event2, BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
+    public void accept(E event, Object event2, BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
         if (handler == null){
             handler = handler(exceptionHandler, successHandler);
         }
         handler.accept(event, (A)event2);
     }
 
-    public BiConsumer<E, A> handler(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
+    public BiConsumer<E, A> handler(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
         return (event1, event2) -> {
             BiConsumer<E, A> last = successHandler::accept;
             for (int i = handlers().size() - 1; i >= 0; i--) {
