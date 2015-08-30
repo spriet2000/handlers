@@ -19,7 +19,9 @@ public class HandlersTest {
 
         Handlers<StringBuilder> handlers = new Handlers<>(
                 (e, a) -> hitException.set(true),
-                (e, a) -> hitComplete.set(true),
+                (e, a) -> hitComplete.set(true));
+
+        handlers.andThen(
                 (f, n) -> (e, a) -> {
                     e.append("1");
                     n.accept("A");

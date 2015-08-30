@@ -1,6 +1,7 @@
 package com.github.spriet2000.handlers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -11,22 +12,16 @@ public final class Handlers<E>  {
     private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> handlers;
 
     private BiConsumer<E, Object> handler;
-    private BiConsumer<E, Throwable> exceptionHandler;
-    private BiConsumer<E, Object> successHandler;
+    private BiConsumer<Object, Throwable> exceptionHandler;
+    private BiConsumer<Object, Object> successHandler;
 
-    public Handlers(Handlers<E> handlers) {
-        exceptionHandler = handlers.exceptionHandler();
-        successHandler = handlers.successHandler();
-        this.handlers = handlers.handlers();
-    }
-
-    public Handlers(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
+    public Handlers(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<Object, Object> successHandler) {
         this.exceptionHandler = exceptionHandler;
         this.successHandler = successHandler;
     }
 
     @SafeVarargs
-    public Handlers(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler,
+    public Handlers(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<Object, Object> successHandler,
                     BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>... handlers) {
         this.handlers = new ArrayList<>();
         for (BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>> handler : handlers) {
@@ -56,11 +51,12 @@ public final class Handlers<E>  {
         };
     }
 
-    public Handlers<E> andThen(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>> handler) {
-        if (handlers == null){
-            handlers = new ArrayList<>();
+    @SafeVarargs
+    public final Handlers<E> andThen(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>... handlers) {
+        if (this.handlers == null){
+            this.handlers = new ArrayList<>();
         }
-        handlers.add(handler);
+        Collections.addAll(this.handlers, handlers);
         return this;
     }
 
@@ -69,13 +65,5 @@ public final class Handlers<E>  {
             handlers = new ArrayList<>();
         }
         return handlers;
-    }
-
-    public BiConsumer<E, Throwable> exceptionHandler() {
-        return exceptionHandler;
-    }
-
-    public BiConsumer<E, Object> successHandler() {
-        return successHandler;
     }
 }
