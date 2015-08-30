@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public final class Handlers<E>  {
 
-    private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> consumers;
+    private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> handlers;
 
     private BiConsumer<E, Object> handler;
     private BiConsumer<E, Throwable> exceptionHandler;
@@ -17,15 +17,20 @@ public final class Handlers<E>  {
     public Handlers(Handlers<E> handlers) {
         exceptionHandler = handlers.exceptionHandler();
         successHandler = handlers.successHandler();
-        this.consumers = handlers.consumers();
+        this.handlers = handlers.handlers();
+    }
+
+    public Handlers(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
+        this.exceptionHandler = exceptionHandler;
+        this.successHandler = successHandler;
     }
 
     @SafeVarargs
     public Handlers(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler,
                     BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>... handlers) {
-        this.consumers = new ArrayList<>();
+        this.handlers = new ArrayList<>();
         for (BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>> handler : handlers) {
-            this.consumers.add(handler);
+            this.handlers.add(handler);
         }
         this.exceptionHandler = exceptionHandler;
         this.successHandler = successHandler;
@@ -41,9 +46,9 @@ public final class Handlers<E>  {
     public BiConsumer<E, Object> handler() {
         return (event1, event2) -> {
             BiConsumer<E, Object> last = successHandler::accept;
-            for (int i = consumers().size() - 1; i >= 0; i--) {
+            for (int i = handlers().size() - 1; i >= 0; i--) {
                 final BiConsumer<E, Object> previous = last;
-                last = consumers().get(i).apply(
+                last = handlers().get(i).apply(
                         e2 -> exceptionHandler.accept(event1, e2),
                         e2 -> previous.accept(event1, e2));
             }
@@ -52,15 +57,18 @@ public final class Handlers<E>  {
     }
 
     public Handlers<E> andThen(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>> handler) {
-        this.consumers.add(handler);
+        if (handlers == null){
+            handlers = new ArrayList<>();
+        }
+        handlers.add(handler);
         return this;
     }
 
-    public List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> consumers() {
-        if (consumers == null) {
-            consumers = new ArrayList<>();
+    public List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, Object>>> handlers() {
+        if (handlers == null) {
+            handlers = new ArrayList<>();
         }
-        return consumers;
+        return handlers;
     }
 
     public BiConsumer<E, Throwable> exceptionHandler() {
