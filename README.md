@@ -13,7 +13,7 @@ AtomicBoolean hitComplete = new AtomicBoolean(false);
 
 StringBuilder builder = new StringBuilder();
 
-Handlers<StringBuilder> handlers = new Handlers<>(
+Handlers<StringBuilder, String> handlers = new Handlers<>(
         (f, n) -> (e, a) -> {
             e.append("1");
             n.accept("A");
