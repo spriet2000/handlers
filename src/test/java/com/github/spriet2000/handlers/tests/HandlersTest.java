@@ -17,7 +17,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder> handlers = new Handlers<>(
+        Handlers<StringBuilder, String> handlers = new Handlers<>(
                 (f, n) -> (e, a) -> {
                     e.append("1");
                     n.accept("A");
@@ -47,7 +47,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder> handlers = new Handlers<>(
+        Handlers<StringBuilder, Void> handlers = new Handlers<>(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
@@ -67,7 +67,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder> handlers = new Handlers<>(
+        Handlers<StringBuilder, Void> handlers = new Handlers<>(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> f.accept(new RuntimeException()),
                 (f, n) -> (e, a) -> {});
