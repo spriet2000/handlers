@@ -11,8 +11,6 @@ public final class Handlers<E, A>  {
 
     private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>> handlers;
 
-    private BiConsumer<E, A> handler;
-
     @SafeVarargs
     public Handlers(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>... handlers) {
         this.handlers = new ArrayList<>();
@@ -22,10 +20,8 @@ public final class Handlers<E, A>  {
     }
 
     public void accept(E event, Object event2, BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
-        if (handler == null){
-            handler = handler(exceptionHandler, successHandler);
-        }
-        handler.accept(event, (A)event2);
+        handler(exceptionHandler, successHandler)
+                .accept(event, (A)event2);
     }
 
     public BiConsumer<E, A> handler(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
