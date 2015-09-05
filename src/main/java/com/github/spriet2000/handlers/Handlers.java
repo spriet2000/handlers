@@ -23,11 +23,11 @@ public final class Handlers<E> {
     }
 
     @SafeVarargs
-    public static Composition compose(Handlers... handlers) {
+    public static <E> Composition<E> compose(Handlers... handlers) {
         return new Composition(handlers);
     }
 
-    public BiConsumer handler(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
+    public BiConsumer apply(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
         return (event1, event2) -> {
             BiConsumer<E, Object> last = successHandler::accept;
             for (int i = handlers.size() - 1; i >= 0; i--) {
@@ -45,4 +45,43 @@ public final class Handlers<E> {
         Collections.addAll(this.handlers, handlers);
         return this;
     }
+
+    public static class Composition<E> {
+
+        private List<Handlers> handlers;
+        private BiConsumer exceptionHandler = (e, a) -> {} ;
+        private BiConsumer successHandler= (e, a) -> {} ;
+
+        public Composition(Handlers... handlers) {
+            this.handlers = new ArrayList<>();
+            Collections.addAll(this.handlers, handlers);
+        }
+
+        public Composition<E> andThen(Handlers... handlers) {
+            Collections.addAll(this.handlers, handlers);
+            return this;
+        }
+
+        public Composition<E> exceptionHandler(BiConsumer<E, Throwable> exceptionHandler) {
+            this.exceptionHandler = exceptionHandler;
+            return this;
+        }
+
+        public Composition<E> successHandler(BiConsumer<E, Object> successHandler) {
+            this.successHandler = successHandler;
+            return this;
+        }
+
+        public void accept(E event, Object event2) {
+            BiConsumer last = successHandler::accept;
+            for (int i = handlers.size() - 1; i >= 0; i--) {
+                final BiConsumer previous = last;
+                last = handlers.get(i).apply(
+                        (e, a) -> exceptionHandler.accept(event, a),
+                        (e, a) -> previous.accept(event, a));
+            }
+            last.accept(event, event2);
+        }
+    }
+
 }

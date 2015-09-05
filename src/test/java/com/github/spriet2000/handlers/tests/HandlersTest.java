@@ -1,6 +1,5 @@
 package com.github.spriet2000.handlers.tests;
 
-import com.github.spriet2000.handlers.Composition;
 import com.github.spriet2000.handlers.Handlers;
 import org.junit.Test;
 
@@ -34,7 +33,7 @@ public class HandlersTest {
                     n.accept(null);
                 });
 
-        BiConsumer handler = handlers.handler(
+        BiConsumer handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -58,7 +57,7 @@ public class HandlersTest {
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
 
-        BiConsumer handler = handlers.handler(
+        BiConsumer handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -81,7 +80,7 @@ public class HandlersTest {
                 (f, n) -> (e, a) -> {
                 });
 
-        BiConsumer handler = handlers.handler(
+        BiConsumer handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -117,13 +116,10 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Composition<StringBuilder> handlers = compose(
-                handlers1, handlers2, handlers3);
-
-        handlers.successHandler((e, a) -> hitComplete.set(true))
-                .exceptionHandler((e, a) -> hitException.set(true));
-
-        handlers.accept(builder, null);
+        compose(handlers1, handlers2, handlers3)
+                .successHandler((e, a) -> hitComplete.set(true))
+                .exceptionHandler((e, a) -> hitException.set(true))
+                .accept(builder, null);
 
         assertEquals("123", builder.toString());
         assertEquals(false, hitException.get());
