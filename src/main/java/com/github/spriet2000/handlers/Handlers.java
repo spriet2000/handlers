@@ -27,7 +27,7 @@ public final class Handlers<E, A> {
         return new Composition(handlers);
     }
 
-    public BiConsumer apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
+    public BiConsumer apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
         return (event1, event2) -> {
             BiConsumer<E, A> last = successHandler::accept;
             for (int i = handlers.size() - 1; i >= 0; i--) {
@@ -39,7 +39,8 @@ public final class Handlers<E, A> {
             last.accept((E) event1, (A) event2);
         };
     }
-
+}
+handlers.apply(exception, success).accept(null, null)
     @SafeVarargs
     public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
