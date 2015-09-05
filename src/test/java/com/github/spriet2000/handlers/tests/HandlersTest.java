@@ -20,7 +20,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, String> handlers = compose(
+        Handlers<StringBuilder> handlers = compose(
                 (f, n) -> (e, a) -> {
                     e.append("1");
                     n.accept("A");
@@ -53,7 +53,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, Void> handlers = compose(
+        Handlers<StringBuilder> handlers = compose(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
@@ -75,7 +75,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, Void> handlers = compose(
+        Handlers<StringBuilder> handlers = compose(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> f.accept(new RuntimeException()),
                 (f, n) -> (e, a) -> {
@@ -97,19 +97,19 @@ public class HandlersTest {
         AtomicBoolean hitException = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-        Handlers<StringBuilder, Object> handlers1 = compose((f, n) ->
+        Handlers<StringBuilder> handlers1 = compose((f, n) ->
                 (e, a) -> {
                     e.append("1");
                     n.accept(a);
                 });
 
-        Handlers<StringBuilder, Object> handlers2 = compose((f, n) ->
+        Handlers<StringBuilder> handlers2 = compose((f, n) ->
                 (e, a) -> {
                     e.append("2");
                     n.accept(a);
                 });
 
-        Handlers<StringBuilder, Object> handlers3 = compose((f, n) ->
+        Handlers<StringBuilder> handlers3 = compose((f, n) ->
                 (e, a) -> {
                     e.append("3");
                     n.accept(a);
