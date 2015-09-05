@@ -23,8 +23,8 @@ public final class Handlers<E, A> {
     }
 
     @SafeVarargs
-    public static <E> Composition<E> compose(Handlers... handlers) {
-        return new Composition(handlers);
+    public static <E, A> Composition<E, A> compose(Handlers<E, A>... handlers) {
+        return new Composition<>(handlers);
     }
 
     public BiConsumer apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
@@ -46,7 +46,7 @@ public final class Handlers<E, A> {
         return this;
     }
 
-    public static class Composition<E> {
+    public static class Composition<E, A> {
 
         private BiConsumer handler;
         private List<Handlers> handlers;
@@ -58,22 +58,27 @@ public final class Handlers<E, A> {
             Collections.addAll(this.handlers, handlers);
         }
 
-        public Composition<E> andThen(Handlers... handlers) {
+        public Composition<E, A> andThen(Handlers... handlers) {
             Collections.addAll(this.handlers, handlers);
             return this;
         }
 
-        public Composition<E> exceptionHandler(BiConsumer<E, Throwable> exceptionHandler) {
+        public Composition<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>... handlers) {
+            this.handlers.add(new Handlers(handlers));
+            return this;
+        }
+
+        public Composition<E, A> exceptionHandler(BiConsumer<E, Throwable> exceptionHandler) {
             this.exceptionHandler = exceptionHandler;
             return this;
         }
 
-        public Composition<E> successHandler(BiConsumer<E, Object> successHandler) {
+        public Composition<E, A> successHandler(BiConsumer<E, A> successHandler) {
             this.successHandler = successHandler;
             return this;
         }
 
-        public void accept(E event, Object event2) {
+        public void accept(E event, A event2) {
             if (handler == null){
                 handler = handler();
             }
