@@ -27,13 +27,13 @@ public final class Handlers<E, A> {
         return new Composition(handlers);
     }
 
-    public BiConsumer apply(BiConsumer<Object, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
+    public BiConsumer apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, Object> successHandler) {
         return (event1, event2) -> {
             BiConsumer<E, A> last = successHandler::accept;
             for (int i = handlers.size() - 1; i >= 0; i--) {
                 final BiConsumer previous = last;
                 last = handlers.get(i).apply(
-                        e2 -> exceptionHandler.accept(event1, e2),
+                        e2 -> exceptionHandler.accept((E) event1, e2),
                         e2 -> previous.accept(event1, e2));
             }
             last.accept((E) event1, (A) event2);
