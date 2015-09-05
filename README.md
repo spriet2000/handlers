@@ -45,20 +45,20 @@ Handlers provides a minimal and adaptable interface for developing applications.
     AtomicBoolean hitException = new AtomicBoolean(false);
     AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-    Handlers<StringBuilder> handlers1 = compose((f, n) ->
-            (e, a) -> {
+    Handlers<StringBuilder> handlers1 = compose(
+            (f, n) -> (e, a) -> {
                 e.append("1");
                 n.accept(a);
             });
 
-    Handlers<StringBuilder> handlers2 = compose((f, n) ->
-            (e, a) -> {
+    Handlers<StringBuilder> handlers2 = compose(
+            (f, n) -> (e, a) -> {
                 e.append("2");
                 n.accept(a);
             });
 
-    Handlers<StringBuilder> handlers3 = compose((f, n) ->
-            (e, a) -> {
+    Handlers<StringBuilder> handlers3 = compose(
+            (f, n) -> (e, a) -> {
                 e.append("3");
                 n.accept(a);
             });
