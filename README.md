@@ -1,6 +1,6 @@
 # Handlers
 
-Handlers provides a minimal and adaptable interface for developing applications.
+Handlers provides a minimal and adaptable interface for chaining handlers.
 
 [![Build Status](https://travis-ci.org/spriet2000/handlers.svg?branch=master)](https://travis-ci.org/spriet2000/handlers)
 
