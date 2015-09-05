@@ -48,6 +48,7 @@ public final class Handlers<E> {
 
     public static class Composition<E> {
 
+        private BiConsumer handler;
         private List<Handlers> handlers;
         private BiConsumer exceptionHandler = (e, a) -> {} ;
         private BiConsumer successHandler= (e, a) -> {} ;
@@ -73,14 +74,23 @@ public final class Handlers<E> {
         }
 
         public void accept(E event, Object event2) {
-            BiConsumer last = successHandler::accept;
-            for (int i = handlers.size() - 1; i >= 0; i--) {
-                final BiConsumer previous = last;
-                last = handlers.get(i).apply(
-                        (e, a) -> exceptionHandler.accept(event, a),
-                        (e, a) -> previous.accept(event, a));
+            if (handler == null){
+                handler = handler();
             }
-            last.accept(event, event2);
+            handler.accept(event, event2);
+        }
+
+        private BiConsumer handler(){
+            return (event, arg) -> {
+                BiConsumer last = successHandler::accept;
+                for (int i = handlers.size() - 1; i >= 0; i--) {
+                    final BiConsumer previous = last;
+                    last = handlers.get(i).apply(
+                            (e, a) -> exceptionHandler.accept(event, a),
+                            (e, a) -> previous.accept(event, a));
+                }
+                last.accept(event, arg);
+            };
         }
     }
 
