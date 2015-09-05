@@ -39,8 +39,7 @@ public final class Handlers<E, A> {
             last.accept((E) event1, (A) event2);
         };
     }
-}
-handlers.apply(exception, success).accept(null, null)
+
     @SafeVarargs
     public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
