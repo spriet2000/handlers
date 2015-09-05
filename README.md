@@ -13,7 +13,7 @@ AtomicBoolean hitComplete = new AtomicBoolean(false);
 
 StringBuilder builder = new StringBuilder();
 
-Handlers<StringBuilder, String> handlers = compose(
+Handlers<StringBuilder> handlers = compose(
         (f, n) -> (e, a) -> {
             e.append("1");
             n.accept("A");
