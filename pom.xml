@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.spriet2000</groupId>
-    <artifactId>vertx-handlers</artifactId>
+    <artifactId>handlers</artifactId>
     <packaging>jar</packaging>
     <version>0.1.0-SNAPSHOT</version>
-    <name>vertx-handlers</name>
+    <name>handlers</name>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -99,9 +99,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:spriet2000@github.com:vertx-handlers.git</connection>
-        <developerConnection>scm:git:spriet2000@github.com:vertx-handlers.git</developerConnection>
-        <url>spriet2000@github.com:vertx-handlers.git</url>
+        <connection>scm:git:spriet2000@github.com:handlers.git</connection>
+        <developerConnection>scm:git:spriet2000@github.com:handlers.git</developerConnection>
+        <url>spriet2000@github.com:handlers.git</url>
     </scm>
 
 </project>

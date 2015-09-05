@@ -2,7 +2,7 @@
 
 Handlers provides a minimal and adaptable interface for developing applications.
 
-[![Build Status](https://travis-ci.org/spriet2000/vertx-handlers.svg?branch=master)](https://travis-ci.org/spriet2000/vertx-handlers)
+[![Build Status](https://travis-ci.org/spriet2000/handlers.svg?branch=master)](https://travis-ci.org/spriet2000/handlers)
 
 ## Example
 
@@ -84,7 +84,7 @@ Handlers provides a minimal and adaptable interface for developing applications.
 
     <dependency>
         <groupId>com.github.spriet2000</groupId>
-        <artifactId>vertx-handlers</artifactId>
+        <artifactId>handlers</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </dependency>
 
