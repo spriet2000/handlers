@@ -9,17 +9,17 @@ import java.util.function.Consumer;
 
 public final class Handlers<E, A> {
 
-    private List<BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>> handlers;
+    private List<BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>> handlers;
 
     @SafeVarargs
-    public Handlers(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>... handlers) {
+    public Handlers(BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>... handlers) {
         this.handlers = new ArrayList<>();
         Collections.addAll(this.handlers, handlers);
     }
 
     @SafeVarargs
     public static <E, A> Handlers<E, A> compose(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>... handlers) {
-        return new Handlers<>(handlers);
+        return new Handlers(handlers);
     }
 
     @SafeVarargs
@@ -41,7 +41,7 @@ public final class Handlers<E, A> {
     }
 
     @SafeVarargs
-    public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<Object>, BiConsumer<E, A>>... handlers) {
+    public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<E>, BiConsumer<E, A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
         return this;
     }
@@ -93,5 +93,4 @@ public final class Handlers<E, A> {
             };
         }
     }
-
 }
