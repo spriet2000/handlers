@@ -1,10 +1,13 @@
 package com.github.spriet2000.handlers.tests;
 
+import com.github.spriet2000.handlers.Composition;
 import com.github.spriet2000.handlers.Handlers;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
+import static com.github.spriet2000.handlers.Handlers.compose;
 import static org.junit.Assert.assertEquals;
 
 public class HandlersTest {
@@ -17,7 +20,7 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, String> handlers = new Handlers<>(
+        Handlers<StringBuilder, String> handlers = compose(
                 (f, n) -> (e, a) -> {
                     e.append("1");
                     n.accept("A");
@@ -31,14 +34,17 @@ public class HandlersTest {
                     n.accept(null);
                 });
 
-        handlers.accept(builder, null,
+        BiConsumer handler = handlers.handler(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
+
+        handler.accept(builder, null);
 
         assertEquals("123", builder.toString());
         assertEquals(false, hitException.get());
         assertEquals(true, hitComplete.get());
     }
+
 
     @Test
     public void testCompleteSuccess() {
@@ -47,14 +53,16 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, Void> handlers = new Handlers<>(
+        Handlers<StringBuilder, Void> handlers = compose(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
 
-        handlers.accept(builder, null,
+        BiConsumer handler = handlers.handler(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
+
+        handler.accept(builder, null);
 
         assertEquals(false, hitException.get());
         assertEquals(true, hitComplete.get());
@@ -67,16 +75,58 @@ public class HandlersTest {
 
         StringBuilder builder = new StringBuilder();
 
-        Handlers<StringBuilder, Void> handlers = new Handlers<>(
+        Handlers<StringBuilder, Void> handlers = compose(
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> f.accept(new RuntimeException()),
-                (f, n) -> (e, a) -> {});
+                (f, n) -> (e, a) -> {
+                });
 
-        handlers.accept(builder, null,
+        BiConsumer handler = handlers.handler(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
+        handler.accept(builder, null);
+
         assertEquals(true, hitException.get());
         assertEquals(false, hitComplete.get());
+    }
+
+    @Test
+    public void compositionTest() {
+
+        AtomicBoolean hitException = new AtomicBoolean(false);
+        AtomicBoolean hitComplete = new AtomicBoolean(false);
+
+        Handlers<StringBuilder, Object> handlers1 = compose((f, n) ->
+                (e, a) -> {
+                    e.append("1");
+                    n.accept(a);
+                });
+
+        Handlers<StringBuilder, Object> handlers2 = compose((f, n) ->
+                (e, a) -> {
+                    e.append("2");
+                    n.accept(a);
+                });
+
+        Handlers<StringBuilder, Object> handlers3 = compose((f, n) ->
+                (e, a) -> {
+                    e.append("3");
+                    n.accept(a);
+                });
+
+        StringBuilder builder = new StringBuilder();
+
+        Composition<StringBuilder> handlers = compose(
+                handlers1, handlers2, handlers3);
+
+        handlers.successHandler((e, a) -> hitComplete.set(true))
+                .exceptionHandler((e, a) -> hitException.set(true));
+
+        handlers.accept(builder, null);
+
+        assertEquals("123", builder.toString());
+        assertEquals(false, hitException.get());
+        assertEquals(true, hitComplete.get());
     }
 }

@@ -13,7 +13,7 @@ AtomicBoolean hitComplete = new AtomicBoolean(false);
 
 StringBuilder builder = new StringBuilder();
 
-Handlers<StringBuilder, String> handlers = new Handlers<>(
+Handlers<StringBuilder, String> handlers = compose(
         (f, n) -> (e, a) -> {
             e.append("1");
             n.accept("A");
@@ -27,9 +27,11 @@ Handlers<StringBuilder, String> handlers = new Handlers<>(
             n.accept(null);
         });
 
-handlers.accept(builder, null,
+BiConsumer handler = handlers.handler(
         (e, a) -> hitException.set(true),
         (e, a) -> hitComplete.set(true));
+
+handler.accept(builder, null);
 
 assertEquals("123", builder.toString());
 assertEquals(false, hitException.get());
