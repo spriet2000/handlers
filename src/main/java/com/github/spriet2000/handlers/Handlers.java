@@ -19,7 +19,7 @@ public final class Handlers<E, A> {
 
     @SafeVarargs
     public static <E, A> Handlers<E, A> compose(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
-        return new Handlers(handlers);
+        return new Handlers<>(handlers);
     }
 
     @SafeVarargs
@@ -27,16 +27,16 @@ public final class Handlers<E, A> {
         return new Composition<>(handlers);
     }
 
-    public BiConsumer apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
-        return (event1, event2) -> {
+    public BiConsumer<E, A> apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
+        return (event, argument) -> {
             BiConsumer<E, A> last = successHandler::accept;
             for (int i = handlers.size() - 1; i >= 0; i--) {
-                final BiConsumer previous = last;
+                final BiConsumer<E, A> previous = last;
                 last = handlers.get(i).apply(
-                        e2 -> exceptionHandler.accept((E) event1, e2),
-                        e2 -> previous.accept(event1, e2));
+                        a -> exceptionHandler.accept(event, a),
+                        a -> previous.accept(event, a));
             }
-            last.accept((E) event1, (A) event2);
+            last.accept(event, argument);
         };
     }
 
@@ -49,22 +49,25 @@ public final class Handlers<E, A> {
     public static class Composition<E, A> {
 
         private BiConsumer<E, A> handler;
-        private List<Handlers> handlers;
+        private List<Handlers<E, A>> handlers;
         private BiConsumer<E, Throwable>  exceptionHandler = (e, a) -> {} ;
         private BiConsumer<E, A>  successHandler= (e, a) -> {} ;
 
+        @SafeVarargs
         public Composition(Handlers<E, A>... handlers) {
             this.handlers = new ArrayList<>();
             Collections.addAll(this.handlers, handlers);
         }
 
-        public Composition<E, A> andThen(Handlers<E, A>... handlers) {
+        @SafeVarargs
+        public final Composition<E, A> andThen(Handlers<E, A>... handlers) {
             Collections.addAll(this.handlers, handlers);
             return this;
         }
 
-        public Composition<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
-            this.handlers.add(new Handlers(handlers));
+        @SafeVarargs
+        public final Composition<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
+            this.handlers.add(new Handlers<>(handlers));
             return this;
         }
 
@@ -78,21 +81,21 @@ public final class Handlers<E, A> {
             return this;
         }
 
-        public void accept(E event, A event2) {
+        public void accept(E event, A argument) {
             if (handler == null){
                 handler = handler();
             }
-            handler.accept(event, event2);
+            handler.accept(event, argument);
         }
 
         private BiConsumer<E, A> handler(){
             return (event, arg) -> {
                 BiConsumer<E, A> last = successHandler::accept;
                 for (int i = handlers.size() - 1; i >= 0; i--) {
-                    final BiConsumer previous = last;
+                    final BiConsumer<E, A> previous = last;
                     last = handlers.get(i).apply(
-                            (e, a) -> exceptionHandler.accept((E) e, (Throwable) a),
-                            (e, a) -> previous.accept(e, a));
+                            (e, a) -> exceptionHandler.accept(event, a),
+                            (e, a) -> previous.accept(event, a));
                 }
                 last.accept(event, arg);
             };

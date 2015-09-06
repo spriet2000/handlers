@@ -33,7 +33,7 @@ public class HandlersTest {
                     n.accept(null);
                 });
 
-        BiConsumer handler = handlers.apply(
+        BiConsumer<StringBuilder, String> handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -58,7 +58,7 @@ public class HandlersTest {
                 (f, n) -> (e, a) -> n.accept(null),
                 (f, n) -> (e, a) -> n.accept(null));
 
-        BiConsumer handler = handlers.apply(
+        BiConsumer<StringBuilder, String> handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -82,7 +82,7 @@ public class HandlersTest {
                 (f, n) -> (e, a) -> {
                 });
 
-        BiConsumer handler = handlers.apply(
+        BiConsumer<StringBuilder, String> handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
