@@ -38,43 +38,6 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
     assertEquals(true, hitComplete.get());
 
 ```
-### Example composition
-
-``` java
-
-    AtomicBoolean hitException = new AtomicBoolean(false);
-    AtomicBoolean hitComplete = new AtomicBoolean(false);
-
-    Handlers<StringBuilder, String>> handlers1 = compose(
-            (f, n) -> (e, a) -> {
-                e.append("1");
-                n.accept(a);
-            });
-
-    Handlers<StringBuilder, String>> handlers2 = compose(
-            (f, n) -> (e, a) -> {
-                e.append("2");
-                n.accept(a);
-            });
-
-    Handlers<StringBuilder, String>> handlers3 = compose(
-            (f, n) -> (e, a) -> {
-                e.append("3");
-                n.accept(a);
-            });
-
-    StringBuilder builder = new StringBuilder();
-
-    compose(handlers1, handlers2, handlers3)
-            .successHandler((e, a) -> hitComplete.set(true))
-            .exceptionHandler((e, a) -> hitException.set(true))
-            .accept(builder, null);
-
-    assertEquals("123", builder.toString());
-    assertEquals(false, hitException.get());
-    assertEquals(true, hitComplete.get());
-    
-```
 
 ## Installation
 
