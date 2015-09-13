@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public final class Handlers<E, A> {
 
@@ -15,6 +16,14 @@ public final class Handlers<E, A> {
     public Handlers(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
         this.handlers = new ArrayList<>();
         Collections.addAll(this.handlers, handlers);
+    }
+
+    @SafeVarargs
+    public Handlers(Handlers<E, A>... handlers) {
+        this.handlers = new ArrayList<>();
+        for (Handlers<E, A> handler : handlers) {
+            this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
+        }
     }
 
     @SafeVarargs
@@ -43,6 +52,14 @@ public final class Handlers<E, A> {
     @SafeVarargs
     public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
+        return this;
+    }
+
+    @SafeVarargs
+    public final Handlers<E, A> andThen(Handlers<E, A>... handlers) {
+        for (Handlers<E, A> handler : handlers) {
+            this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
+        }
         return this;
     }
 
@@ -88,7 +105,7 @@ public final class Handlers<E, A> {
             handler.accept(event, argument);
         }
 
-        private BiConsumer<E, A> handler(){
+        public BiConsumer<E, A> handler(){
             return (event, arg) -> {
                 BiConsumer<E, A> last = successHandler::accept;
                 for (int i = handlers.size() - 1; i >= 0; i--) {
