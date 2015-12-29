@@ -85,7 +85,6 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
                 (e, a) -> hitComplete.set(true));
 
         StringBuilder builder = new StringBuilder();
-
         handler.accept(builder, null);
 
         assertEquals("123", builder.toString());
