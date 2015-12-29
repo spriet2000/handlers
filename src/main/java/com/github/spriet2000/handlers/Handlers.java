@@ -3,67 +3,59 @@ package com.github.spriet2000.handlers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public final class Handlers<E, A> {
+public final class Handlers<A> {
 
-    private List<BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>> handlers;
-
-    public Handlers() {
-        this.handlers = new ArrayList<>();
-    }
+    private final List<BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>> handlers = new ArrayList<>();
 
     @SafeVarargs
-    public Handlers(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
-        this.handlers = new ArrayList<>();
+    public Handlers(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
     }
 
     @SafeVarargs
-    public Handlers(Handlers<E, A>... handlers) {
-        this.handlers = new ArrayList<>();
-        for (Handlers<E, A> handler : handlers) {
+    public Handlers(Handlers<A>... handlers) {
+        for (Handlers<A> handler : handlers) {
             this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
         }
     }
 
     @SafeVarargs
-    public static <E, A> Handlers<E, A> compose(Handlers<E, A>... handlers) {
+    public static <A> Handlers<A> compose(Handlers<A>... handlers) {
         return new Handlers<>(handlers);
     }
 
     @SafeVarargs
-    public static <E, A> Handlers<E, A> compose(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
+    public static <A> Handlers<A> compose(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
         return new Handlers<>(handlers);
     }
 
-    public BiConsumer<E, A> apply(BiConsumer<E, Throwable> exceptionHandler, BiConsumer<E, A> successHandler) {
-        return (event, argument) -> {
-            BiConsumer<E, A> last = successHandler::accept;
-            for (int i = handlers.size() - 1; i >= 0; i--) {
-                final BiConsumer<E, A> previous = last;
-                last = handlers.get(i).apply(
-                        a -> exceptionHandler.accept(event, a),
-                        a -> previous.accept(event, a));
-            }
-            last.accept(event, argument);
-        };
+    public Consumer<A> apply(Consumer<Throwable> exceptionHandler, Consumer<A> successHandler) {
+        Consumer<A> last = successHandler::accept;
+        for (int i = handlers.size() - 1; i >= 0; i--) {
+            final Consumer<A> previous = last;
+            last = handlers.get(i).apply(
+                    exceptionHandler::accept,
+                    previous::accept);
+        }
+        return last::accept;
     }
 
     @SafeVarargs
-    public final Handlers<E, A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>... handlers) {
+    public final Handlers<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
         return this;
     }
 
     @SafeVarargs
-    public final Handlers<E, A> andThen(Handlers<E, A>... handlers) {
-        for (Handlers<E, A> handler : handlers) {
+    public final Handlers<A> andThen(Handlers<A>... handlers) {
+        for (Handlers<A> handler : handlers) {
             this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
         }
         return this;
     }
 }
+
