@@ -44,27 +44,6 @@ public class HandlersTest {
 
 
     @Test
-    public void testCompleteSuccess() {
-
-        AtomicBoolean hitException = new AtomicBoolean(false);
-        AtomicBoolean hitComplete = new AtomicBoolean(false);
-
-        Handlers<Void> handlers = compose(
-                (f, n) -> n::accept,
-                (f, n) -> n::accept,
-                (f, n) -> n::accept);
-
-        Consumer<Void> handler = handlers.apply(
-                a -> hitException.set(false),
-                a -> hitComplete.set(true));
-
-        handler.accept(null);
-
-        assertEquals(false, hitException.get());
-        assertEquals(true, hitComplete.get());
-    }
-
-    @Test
     public void testCompleteException() {
 
         AtomicBoolean hitException = new AtomicBoolean(false);

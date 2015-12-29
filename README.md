@@ -4,7 +4,7 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 [![Build Status](https://travis-ci.org/spriet2000/handlers.svg?branch=master)](https://travis-ci.org/spriet2000/handlers)
 
-## Example
+## Example success
 
 ```java
     
@@ -35,6 +35,31 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
         assertEquals(true, hitComplete.get());
 
 ```
+
+## Example fail
+
+
+```java
+
+        AtomicBoolean hitException = new AtomicBoolean(false);
+        AtomicBoolean hitComplete = new AtomicBoolean(false);
+
+        Handlers<Void> handlers = compose(
+                (f, n) -> n::accept,
+                (f, n) -> a -> f.accept(new RuntimeException()),
+                (f, n) -> n::accept );
+
+        Consumer<Void> handler = handlers.apply(
+                a -> hitException.set(true),
+                a -> hitComplete.set(true));
+
+        handler.accept(null);
+
+        assertEquals(true, hitException.get());
+        assertEquals(false, hitComplete.get());
+
+```
+
 
 ## Installation
 
