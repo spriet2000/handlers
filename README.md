@@ -8,34 +8,31 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 ```java
     
-    AtomicBoolean hitException = new AtomicBoolean(false);
-    AtomicBoolean hitComplete = new AtomicBoolean(false);
+        AtomicBoolean hitException = new AtomicBoolean(false);
+        AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-    StringBuilder builder = new StringBuilder();
+        Handlers<StringBuilder> handlers = compose(
+                (f, n) -> a -> {
+                    a.append("1");
+                    n.accept(a);
+                }, (f, n) -> a -> {
+                    a.append("2");
+                    n.accept(a);
+                }, (f, n) -> a -> {
+                    a.append("3");
+                    n.accept(null);
+                });
 
-    Handlers<StringBuilder, String>> handlers = compose(
-            (f, n) -> (e, a) -> {
-                e.append("1");
-                n.accept("A");
-            }, (f, n) -> (e, a) -> {
-                assertEquals("A", a);
-                e.append("2");
-                n.accept("B");
-            }, (f, n) -> (e, a) -> {
-                assertEquals("B", a);
-                e.append("3");
-                n.accept(null);
-            });
+        Consumer<StringBuilder> handler = handlers.apply(
+                a -> hitException.set(true),
+                a -> hitComplete.set(true));
 
-    BiConsumer handler = handlers.apply(
-            (e, a) -> hitException.set(true),
-            (e, a) -> hitComplete.set(true));
+        StringBuilder builder = new StringBuilder();
+        handler.accept(builder);
 
-    handler.accept(builder, null);
-
-    assertEquals("123", builder.toString());
-    assertEquals(false, hitException.get());
-    assertEquals(true, hitComplete.get());
+        assertEquals("123", builder.toString());
+        assertEquals(false, hitException.get());
+        assertEquals(true, hitComplete.get());
 
 ```
 
