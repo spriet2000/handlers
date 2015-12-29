@@ -11,7 +11,7 @@ public final class Handlers<A> {
 
     private final List<BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>> handlers = new ArrayList<>();
 
-    public Handlers(){
+    public Handlers() {
     }
 
     @SafeVarargs

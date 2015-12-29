@@ -12,7 +12,7 @@ public final class BiHandlers<E, A> {
 
     private List<BiFunction<Consumer<Throwable>, Consumer<A>, BiConsumer<E, A>>> handlers = new ArrayList<>();
 
-    public BiHandlers(){
+    public BiHandlers() {
     }
 
     @SafeVarargs

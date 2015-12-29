@@ -52,7 +52,7 @@ public class HandlersTest {
         Handlers<Void> handlers = compose(
                 (f, n) -> n::accept,
                 (f, n) -> a -> f.accept(new RuntimeException()),
-                (f, n) -> n::accept );
+                (f, n) -> n::accept);
 
         Consumer<Void> handler = handlers.apply(
                 a -> hitException.set(true),
