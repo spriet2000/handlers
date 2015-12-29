@@ -60,6 +60,41 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 ```
 
+## Example success bi handlers
+
+
+```java
+
+        AtomicBoolean hitException = new AtomicBoolean(false);
+        AtomicBoolean hitComplete = new AtomicBoolean(false);
+
+        BiHandlers<StringBuilder, String> handlers = compose(
+                (f, n) -> (e, a) -> {
+                    e.append("1");
+                    n.accept("a");
+                }, (f, n) -> (e, a) -> {
+                    e.append("2");
+                    n.accept("b");
+                }, (f, n) -> (e, a) -> {
+                    e.append("3");
+                    n.accept("c");
+                });
+
+        BiConsumer<StringBuilder, String> handler = handlers.apply(
+                (e, a) -> hitException.set(true),
+                (e, a) -> hitComplete.set(true));
+
+        StringBuilder builder = new StringBuilder();
+
+        handler.accept(builder, null);
+
+        assertEquals("123", builder.toString());
+
+        assertEquals(false, hitException.get());
+        assertEquals(true, hitComplete.get());
+
+```
+
 
 ## Installation
 

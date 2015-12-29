@@ -26,7 +26,7 @@ public class HandlersTest {
                     n.accept(a);
                 }, (f, n) -> a -> {
                     a.append("3");
-                    n.accept(null);
+                    n.accept(a);
                 });
 
         Consumer<StringBuilder> handler = handlers.apply(
@@ -44,7 +44,7 @@ public class HandlersTest {
 
 
     @Test
-    public void testCompleteException() {
+    public void testException() {
 
         AtomicBoolean hitException = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
