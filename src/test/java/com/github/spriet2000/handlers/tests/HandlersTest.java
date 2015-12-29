@@ -34,6 +34,7 @@ public class HandlersTest {
                 a -> hitComplete.set(true));
 
         StringBuilder builder = new StringBuilder();
+
         handler.accept(builder);
 
         assertEquals("123", builder.toString());
@@ -49,12 +50,12 @@ public class HandlersTest {
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
         Handlers<Void> handlers = compose(
-                (f, n) -> a -> n.accept(null),
-                (f, n) -> a -> n.accept(null),
-                (f, n) -> a -> n.accept(null));
+                (f, n) -> n::accept,
+                (f, n) -> n::accept,
+                (f, n) -> n::accept);
 
         Consumer<Void> handler = handlers.apply(
-                a -> hitException.set(true),
+                a -> hitException.set(false),
                 a -> hitComplete.set(true));
 
         handler.accept(null);
@@ -70,10 +71,9 @@ public class HandlersTest {
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
         Handlers<Void> handlers = compose(
-                (f, n) -> a -> n.accept(null),
+                (f, n) -> n::accept,
                 (f, n) -> a -> f.accept(new RuntimeException()),
-                (f, n) -> a -> {
-                });
+                (f, n) -> n::accept );
 
         Consumer<Void> handler = handlers.apply(
                 a -> hitException.set(true),
