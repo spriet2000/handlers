@@ -69,19 +69,19 @@ BiHandlers is slower because the list is iterated everytime accept is called. Fi
         AtomicBoolean hitException = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-        BiHandlers<StringBuilder, String> handlers = compose(
+        BiHandlers<StringBuilder, Void> handlers = compose(
                 (f, n) -> (e, a) -> {
                     e.append("1");
-                    n.accept("a");
+                    n.accept(e, a);
                 }, (f, n) -> (e, a) -> {
                     e.append("2");
-                    n.accept("b");
+                    n.accept(e, a);
                 }, (f, n) -> (e, a) -> {
                     e.append("3");
-                    n.accept("c");
+                    n.accept(e, a);
                 });
 
-        BiConsumer<StringBuilder, String> handler = handlers.apply(
+        BiConsumer<StringBuilder, Void> handler = handlers.apply(
                 (e, a) -> hitException.set(true),
                 (e, a) -> hitComplete.set(true));
 
@@ -92,6 +92,21 @@ BiHandlers is slower because the list is iterated everytime accept is called. Fi
 
         assertEquals(false, hitException.get());
         assertEquals(true, hitComplete.get());
+
+```
+## Example success bi handler implementation
+
+```java
+
+    public class ExampleHandler<Void> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
+            BiConsumer<StringBuilder, Void>, BiConsumer<StringBuilder, Void>> {
+
+        @Override
+        public BiConsumer<StringBuilder, Void> apply(BiConsumer<StringBuilder, Throwable> fail,
+                                                  BiConsumer<StringBuilder, Void> next) {
+            return next::accept;
+        }
+    }
 
 ```
 

@@ -48,6 +48,14 @@ public final class Handlers<A> {
     }
 
     @SafeVarargs
+    public final Handlers<A> andThen(Consumer<A>... consumers) {
+        for (Consumer<A> consumer : consumers) {
+            handlers.add((f, n) -> consumer::accept);
+        }
+        return this;
+    }
+
+    @SafeVarargs
     public final Handlers<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
         Collections.addAll(this.handlers, handlers);
         return this;

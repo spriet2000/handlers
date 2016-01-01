@@ -33,11 +33,15 @@ public class HandlersTest {
                 a -> hitException.set(true),
                 a -> hitComplete.set(true));
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder1 = new StringBuilder();
+        handler.accept(builder1);
 
-        handler.accept(builder);
+        StringBuilder builder2 = new StringBuilder();
+        handler.accept(builder2);
 
-        assertEquals("123", builder.toString());
+        assertEquals("123", builder1.toString());
+        assertEquals("123", builder2.toString());
+
         assertEquals(false, hitException.get());
         assertEquals(true, hitComplete.get());
     }

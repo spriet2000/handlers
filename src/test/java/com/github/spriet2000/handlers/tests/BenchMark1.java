@@ -36,9 +36,9 @@ public class BenchMark1 {
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
         BiHandlers<StringBuilder, Void> handlers = BiHandlers.compose(
-                (f, n) -> (e, a) -> n.accept(a),
-                (f, n) -> (e, a) -> n.accept(a),
-                (f, n) -> (e, a) -> n.accept(a));
+                (f, n) -> n::accept,
+                (f, n) -> n::accept,
+                (f, n) -> n::accept);
 
         BiConsumer<StringBuilder, Void> handler = handlers.apply(
                 (e, a) -> hitException.set(true),
