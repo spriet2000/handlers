@@ -62,8 +62,6 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 ## Example success bi handlers
 
-BiHandlers is slower because the list is iterated everytime accept is called. Figuring out how to fix this.. Any suggestions?
-
 ```java
 
         AtomicBoolean hitException = new AtomicBoolean(false);
