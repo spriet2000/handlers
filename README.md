@@ -92,7 +92,7 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
         assertEquals(true, hitComplete.get());
 
 ```
-## Example success bi handler implementation
+## Example bi handler implementation
 
 ```java
 
