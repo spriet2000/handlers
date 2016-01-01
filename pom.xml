@@ -9,12 +9,6 @@
     <version>0.1.0-SNAPSHOT</version>
     <name>handlers</name>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <properties>
         <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
     </properties>
@@ -114,5 +108,16 @@
         <developerConnection>scm:git:spriet2000@github.com:handlers.git</developerConnection>
         <url>spriet2000@github.com:handlers.git</url>
     </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
