@@ -72,12 +72,12 @@ public class BiHandlersTest {
         assertEquals(false, hitComplete.get());
     }
 
-    public class ExampleHandler<Void> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
+    public class ExampleHandler<StringBuilder> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
             BiConsumer<StringBuilder, Void>, BiConsumer<StringBuilder, Void>> {
 
         @Override
         public BiConsumer<StringBuilder, Void> apply(BiConsumer<StringBuilder, Throwable> fail,
-                                                  BiConsumer<StringBuilder, Void> next) {
+                                                     BiConsumer<StringBuilder, Void> next) {
             return next::accept;
         }
     }

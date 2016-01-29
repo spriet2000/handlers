@@ -4,6 +4,8 @@ import com.github.spriet2000.handlers.Handlers;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static com.github.spriet2000.handlers.Handlers.compose;
@@ -68,4 +70,14 @@ public class HandlersTest {
         assertEquals(false, hitComplete.get());
     }
 
+
+    public class ExampleHandler<StringBuilder> implements BiFunction<BiConsumer<StringBuilder, Throwable>,
+            Consumer<StringBuilder>, Consumer<StringBuilder>> {
+
+        @Override
+        public Consumer<StringBuilder> apply(BiConsumer<StringBuilder, Throwable> fail,
+                                                     Consumer<StringBuilder> next) {
+            return next::accept;
+        }
+    }
 }

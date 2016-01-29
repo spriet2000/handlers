@@ -60,6 +60,23 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 ```
 
+
+## Example handler implementation 
+
+```java
+
+    public class ExampleHandler<StringBuilder> implements BiFunction<BiConsumer<StringBuilder, Throwable>,
+            Consumer<StringBuilder>, Consumer<StringBuilder>> {
+
+        @Override
+        public Consumer<StringBuilder> apply(BiConsumer<StringBuilder, Throwable> fail,
+                                                     Consumer<StringBuilder> next) {
+            return next::accept;
+        }
+    }
+
+```
+
 ## Example success bi handlers
 
 ```java
@@ -96,7 +113,7 @@ Handlers provides a minimal and adaptable interface for chaining handlers.
 
 ```java
 
-    public class ExampleHandler<Void> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
+    public class ExampleHandler<StringBuilder> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
             BiConsumer<StringBuilder, Void>, BiConsumer<StringBuilder, Void>> {
 
         @Override
