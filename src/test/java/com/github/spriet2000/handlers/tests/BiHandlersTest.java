@@ -72,7 +72,7 @@ public class BiHandlersTest {
         assertEquals(false, hitComplete.get());
     }
 
-    public class ExampleHandler<StringBuilder> implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
+    public class ExampleHandler implements  BiFunction<BiConsumer<StringBuilder, Throwable>,
             BiConsumer<StringBuilder, Void>, BiConsumer<StringBuilder, Void>> {
 
         @Override

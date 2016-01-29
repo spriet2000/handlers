@@ -71,7 +71,7 @@ public class HandlersTest {
     }
 
 
-    public class ExampleHandler<StringBuilder> implements BiFunction<BiConsumer<StringBuilder, Throwable>,
+    public class ExampleHandler implements BiFunction<BiConsumer<StringBuilder, Throwable>,
             Consumer<StringBuilder>, Consumer<StringBuilder>> {
 
         @Override
