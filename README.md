@@ -28,7 +28,7 @@ Consumer<StringBuilder> consumer = railway.apply(
         a -> hitComplete.set(true));
 
 StringBuilder builder = new StringBuilder();
-handler.accept(builder);
+consumer.accept(builder);
 
 assertEquals("123", builder.toString());
 
