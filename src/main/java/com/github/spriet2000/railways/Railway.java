@@ -9,26 +9,26 @@ import java.util.stream.Collectors;
 
 public final class Railway<A> {
 
-    private final List<BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>> handlers = new ArrayList<>();
+    private final List<BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>> methods = new ArrayList<>();
 
     @SafeVarargs
-    public Railway(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
-        Collections.addAll(this.handlers, handlers);
+    public Railway(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
+        Collections.addAll(this.methods, methods);
     }
 
     @SafeVarargs
-    public Railway(Railway<A>... handlers) {
-        for (Railway<A> handler : handlers) {
-            this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
+    public Railway(Railway<A>... railways) {
+        for (Railway<A> railway : railways) {
+            this.methods.addAll(railway.methods.stream().collect(Collectors.toList()));
         }
     }
 
-    public Consumer<A> apply(Consumer<Throwable> exceptionHandler, Consumer<A> successHandler) {
-        Consumer<A> last = successHandler;
-        for (int i = handlers.size() - 1; i >= 0; i--) {
+    public Consumer<A> apply(Consumer<Throwable> stop, Consumer<A> next) {
+        Consumer<A> last = next;
+        for (int i = methods.size() - 1; i >= 0; i--) {
             final Consumer<A> previous = last;
-            last = handlers.get(i).apply(
-                    exceptionHandler,
+            last = methods.get(i).apply(
+                    stop,
                     previous);
         }
         return last;
@@ -37,21 +37,21 @@ public final class Railway<A> {
     @SafeVarargs
     public final Railway<A> andThen(Consumer<A>... consumers) {
         for (Consumer<A> consumer : consumers) {
-            handlers.add((f, n) -> consumer);
+            methods.add((f, n) -> consumer);
         }
         return this;
     }
 
     @SafeVarargs
-    public final Railway<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... handlers) {
-        Collections.addAll(this.handlers, handlers);
+    public final Railway<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
+        Collections.addAll(this.methods, methods);
         return this;
     }
 
     @SafeVarargs
-    public final Railway<A> andThen(Railway<A>... handlers) {
-        for (Railway<A> handler : handlers) {
-            this.handlers.addAll(handler.handlers.stream().collect(Collectors.toList()));
+    public final Railway<A> andThen(Railway<A>... railways) {
+        for (Railway<A> railway : railways) {
+            this.methods.addAll(railway.methods.stream().collect(Collectors.toList()));
         }
         return this;
     }

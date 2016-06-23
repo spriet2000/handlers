@@ -8,10 +8,10 @@ Railways provides a minimal and adaptable interface for chaining methods.
 
 ```java
 
-AtomicBoolean hitException = new AtomicBoolean(false);
+AtomicBoolean hitStop = new AtomicBoolean(false);
 AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-Railway<StringBuilder> handlers = compose(
+Railway<StringBuilder> railway = Railways.build(
         (f, n) -> a -> {
             a.append("1");
             n.accept(a);
@@ -23,8 +23,8 @@ Railway<StringBuilder> handlers = compose(
             n.accept(a);
         });
 
-Consumer<StringBuilder> handler = handlers.apply(
-        a -> hitException.set(true),
+Consumer<StringBuilder> consumer = railway.apply(
+        a -> hitStop.set(true),
         a -> hitComplete.set(true));
 
 StringBuilder builder = new StringBuilder();
@@ -32,21 +32,21 @@ handler.accept(builder);
 
 assertEquals("123", builder.toString());
 
-assertEquals(false, hitException.get());
+assertEquals(false, hitStop.get());
 assertEquals(true, hitComplete.get());
 
 ```
 
 
-## Example railways implementation 
+## Example station 
 
 ```java
 
-public class ExampleRailway implements BiFunction<BiConsumer<StringBuilder, Throwable>,
+public class Station implements BiFunction<BiConsumer<StringBuilder, Throwable>,
         Consumer<StringBuilder>, Consumer<StringBuilder>> {
 
     @Override
-    public Consumer<StringBuilder> apply(BiConsumer<StringBuilder, Throwable> fail,
+    public Consumer<StringBuilder> apply(BiConsumer<StringBuilder, Throwable> stop,
                                                  Consumer<StringBuilder> next) {
         return next;
     }

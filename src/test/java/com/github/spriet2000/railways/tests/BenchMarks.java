@@ -12,20 +12,20 @@ public class BenchMarks {
 
     @Benchmark
     public void report() {
-        AtomicBoolean hitException = new AtomicBoolean(false);
+        AtomicBoolean hitStop = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-        Railway<StringBuilder> railway = Railways.compose(
+        Railway<StringBuilder> railway = Railways.build(
                 (f, n) -> n,
                 (f, n) -> n,
                 (f, n) -> n);
 
-        Consumer<StringBuilder> handler = railway.apply(
-                a -> hitException.set(true),
+        Consumer<StringBuilder> consumer = railway.apply(
+                a -> hitStop.set(true),
                 a -> hitComplete.set(true));
 
         for (int i = 0; i < 10000; i++) {
-            handler.accept(new StringBuilder());
+            consumer.accept(new StringBuilder());
         }
     }
 }
