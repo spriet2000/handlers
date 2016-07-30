@@ -1,7 +1,6 @@
 package com.github.spriet2000.railways.tests;
 
-import com.github.spriet2000.railways.Railway;
-import com.github.spriet2000.railways.Railways;
+import com.github.spriet2000.railways.Handlers;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -9,7 +8,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static com.github.spriet2000.railways.Railways.build;
+import static com.github.spriet2000.railways.Handlers.build;
 import static org.junit.Assert.assertEquals;
 
 public class RailwaysTest {
@@ -20,7 +19,7 @@ public class RailwaysTest {
         AtomicBoolean hitStop = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-        Railway<StringBuilder> railway = Railways.build(
+        Handlers<StringBuilder> handlers = build(
                 (f, n) -> a -> {
                     a.append("1");
                     n.accept(a);
@@ -32,7 +31,7 @@ public class RailwaysTest {
                     n.accept(a);
                 });
 
-        Consumer<StringBuilder> handler = railway.apply(
+        Consumer<StringBuilder> handler = handlers.apply(
                 a -> hitStop.set(true),
                 a -> hitComplete.set(true));
 
@@ -52,12 +51,12 @@ public class RailwaysTest {
         AtomicBoolean hitStop = new AtomicBoolean(false);
         AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-        Railway<Void> railway = build(
+        Handlers<Void> handlers = build(
                 (f, n) -> n,
                 (f, n) -> a -> f.accept(new RuntimeException()),
                 (f, n) -> n);
 
-        Consumer<Void> handler = railway.apply(
+        Consumer<Void> handler = handlers.apply(
                 a -> hitStop.set(true),
                 a -> hitComplete.set(true));
 

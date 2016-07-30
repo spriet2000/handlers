@@ -7,19 +7,19 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public final class Railway<A> {
+public final class Handlers<A> {
 
     private final List<BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>> methods = new ArrayList<>();
 
     @SafeVarargs
-    public Railway(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
+    public Handlers(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
         Collections.addAll(this.methods, methods);
     }
 
     @SafeVarargs
-    public Railway(Railway<A>... railways) {
-        for (Railway<A> railway : railways) {
-            this.methods.addAll(railway.methods.stream().collect(Collectors.toList()));
+    public Handlers(Handlers<A>... handlerses) {
+        for (Handlers<A> handlers : handlerses) {
+            this.methods.addAll(handlers.methods.stream().collect(Collectors.toList()));
         }
     }
 
@@ -35,7 +35,7 @@ public final class Railway<A> {
     }
 
     @SafeVarargs
-    public final Railway<A> andThen(Consumer<A>... consumers) {
+    public final Handlers<A> andThen(Consumer<A>... consumers) {
         for (Consumer<A> consumer : consumers) {
             methods.add((f, n) -> consumer);
         }
@@ -43,19 +43,28 @@ public final class Railway<A> {
     }
 
     @SafeVarargs
-    public final Railway<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
+    public final Handlers<A> andThen(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
         Collections.addAll(this.methods, methods);
         return this;
     }
 
     @SafeVarargs
-    public final Railway<A> andThen(Railway<A>... railways) {
-        for (Railway<A> railway : railways) {
-            this.methods.addAll(railway.methods.stream().collect(Collectors.toList()));
+    public final Handlers<A> andThen(Handlers<A>... handlerses) {
+        for (Handlers<A> handlers : handlerses) {
+            this.methods.addAll(handlers.methods.stream().collect(Collectors.toList()));
         }
         return this;
     }
 
+    @SafeVarargs
+    public static <A> Handlers<A> build(Handlers<A>... handlerses) {
+        return new Handlers<>(handlerses);
+    }
+
+    @SafeVarargs
+    public static <A> Handlers<A> build(BiFunction<Consumer<Throwable>, Consumer<A>, Consumer<A>>... methods) {
+        return new Handlers<>(methods);
+    }
 
 }
 

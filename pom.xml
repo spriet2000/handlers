@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.spriet2000</groupId>
-    <artifactId>railways</artifactId>
+    <artifactId>handlerses</artifactId>
     <packaging>jar</packaging>
     <version>0.1.0-SNAPSHOT</version>
-    <name>railways</name>
+    <name>handlerses</name>
 
     <properties>
         <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
@@ -105,8 +105,8 @@
 
     <scm>
         <connection>scm:git:spriet2000@github.com:Railways.git</connection>
-        <developerConnection>scm:git:spriet2000@github.com:railways.git</developerConnection>
-        <url>spriet2000@github.com:railways.git</url>
+        <developerConnection>scm:git:spriet2000@github.com:handlerses.git</developerConnection>
+        <url>spriet2000@github.com:handlerses.git</url>
     </scm>
 
     <distributionManagement>

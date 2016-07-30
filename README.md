@@ -11,7 +11,7 @@ Railways provides a minimal and adaptable interface for chaining methods.
 AtomicBoolean hitStop = new AtomicBoolean(false);
 AtomicBoolean hitComplete = new AtomicBoolean(false);
 
-Railway<StringBuilder> railway = Railways.build(
+Handlers<StringBuilder> handlers = build(
         (f, n) -> a -> {
             a.append("1");
             n.accept(a);
@@ -23,7 +23,7 @@ Railway<StringBuilder> railway = Railways.build(
             n.accept(a);
         });
 
-Consumer<StringBuilder> consumer = railway.apply(
+Consumer<StringBuilder> consumer = handlers.apply(
         a -> hitStop.set(true),
         a -> hitComplete.set(true));
 
