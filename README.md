@@ -38,7 +38,7 @@ assertEquals(true, hitComplete.get());
 ```
 
 
-## Example station 
+## Example handler implementation 
 
 ```java
 
