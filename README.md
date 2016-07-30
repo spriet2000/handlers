@@ -1,6 +1,6 @@
-# Railways
+# Handlers
 
-Railways provides a minimal and adaptable interface for chaining methods.
+Handlers provides a minimal and adaptable interface for chaining methods.
 
 [![Build Status](https://travis-ci.org/spriet2000/railways.svg?branch=master)](https://travis-ci.org/spriet2000/railways)
 
